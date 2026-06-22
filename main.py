@@ -3,6 +3,7 @@ import requests
 import telebot
 from datetime import datetime
 
+# Secrets'tan verileri al
 TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
 TELEGRAM_GROUP_ID = os.getenv("TELEGRAM_GROUP_ID")
 OPENWEATHER_API_KEY = os.getenv("OPENWEATHER_API_KEY")
@@ -16,7 +17,6 @@ def get_weather_data(city):
     return response.json()
 
 def generate_comment(weather_id, temp):
-    # Hava durumu kodlarına göre geniş kapsamlı yorumlar
     if 200 <= weather_id < 300: return "Fırtınalı bir hava var, çok dikkatli ol! ⚡🌩️"
     elif 300 <= weather_id < 600: return "Yağmurlu bir gün, şemsiyeni yanına almayı unutma! ☔🌧️"
     elif 600 <= weather_id < 700: return "Kar yağışı var, sıkı giyin ve kaymamaya dikkat et! ❄️☃️"
@@ -32,8 +32,9 @@ def generate_comment(weather_id, temp):
 
 def main():
     today_str = datetime.now().strftime('%d.%m.%Y')
-    message = f"Günaydın! 🌅 Bugün ({today_str}):\n\n"
+    city_data = []
     
+    # 1. Verileri çek
     for city in ["Ankara", "Istanbul"]:
         try:
             data = get_weather_data(city)
@@ -41,12 +42,33 @@ def main():
             temp = round(data["main"]["temp"])
             desc = data["weather"][0]["description"].capitalize()
             comment = generate_comment(weather_id, temp)
-            
-            # Detaylı ve düzenli mesaj formatı
-            message += f"📍 {city}: {desc}, {temp}°C\n💡 {comment}\n\n"
-        except Exception as e:
-            message += f"📍 {city}: Veri alınamadı 😔\n\n"
-            
+            city_data.append({"name": city, "desc": desc, "temp": temp, "comment": comment})
+        except:
+            city_data.append({"name": city, "desc": "Veri alınamadı", "temp": None, "comment": None})
+
+    # 2. Yorumları grupla
+    grouped = {}
+    for item in city_data:
+        comment = item["comment"]
+        if comment not in grouped:
+            grouped[comment] = []
+        grouped[comment].append(item)
+
+    # 3. Mesajı oluştur
+    message = f"Günaydın! 🌅 Bugün ({today_str}):\n\n"
+    for comment, items in grouped.items():
+        city_names = ", ".join([i["name"] for i in items])
+        message += f"📍 {city_names}:\n"
+        for i in items:
+            if i["temp"] is not None:
+                message += f"• {i['desc']}, {i['temp']}°C\n"
+            else:
+                message += f"• Veri alınamadı\n"
+        if comment:
+            message += f"💡 {comment}\n\n"
+        else:
+            message += "\n"
+
     bot.send_message(TELEGRAM_GROUP_ID, message)
 
 if __name__ == "__main__":
