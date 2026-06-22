@@ -62,7 +62,7 @@ def get_report():
     return message
 
 # --- Menü ve Butonlar ---
-@bot.message_handler(commands=['s'])
+@bot.message_handler(commands=['start'])
 def start(message):
     markup = InlineKeyboardMarkup()
     markup.add(InlineKeyboardButton("🌤️ Hava Durumu Raporu", callback_data="weather"))
