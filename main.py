@@ -55,20 +55,20 @@ def main():
         grouped[comment].append(item)
 
 # 3. Mesajı daha modern ve "rapor" tarzında oluştur
-    message = f"🌅 *GÜNLÜK HAVA RAPORU* | {today_str}\n"
+    message = f"🌅 GÜNLÜK HAVA RAPORU | {today_str}\n"
     message += "━━━━━━━━━━━━━━━━━━━━━━\n\n"
     
     for comment, items in grouped.items():
         city_names = ", ".join([i["name"] for i in items])
-        message += f"📍 *{city_names.upper()}*\n"
+        message += f"📍 {city_names.upper()}\n"
         
         for i in items:
             if i["temp"] is not None:
-                message += f"   • {i['desc']} | *{i['temp']}°C*\n"
+                message += f"   • {i['desc']} | {i['temp']}°C\n"
             else:
                 message += f"   • Veri alınamadı\n"
         
-        message += f"\n💡 *Tavsiye:* {comment}\n"
+        message += f"\n💡 Tavsiye: {comment}\n"
         message += "━━━━━━━━━━━━━━━━━━━━━━\n"
 
     bot.send_message(TELEGRAM_GROUP_ID, message)
