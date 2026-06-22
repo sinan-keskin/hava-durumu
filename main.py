@@ -54,25 +54,22 @@ def main():
             grouped[comment] = []
         grouped[comment].append(item)
 
-# 3. Mesajı oluştur
-    message = f"Günaydın! 🌅 Bugün ({today_str}):\n\n"
+# 3. Mesajı daha modern ve "rapor" tarzında oluştur
+    message = f"🌅 *GÜNLÜK HAVA RAPORU* | {today_str}\n"
+    message += "━━━━━━━━━━━━━━━━━━━━━━\n\n"
+    
     for comment, items in grouped.items():
-        # Şehir isimlerini başlık yap
         city_names = ", ".join([i["name"] for i in items])
-        message += f"📍 {city_names}:\n"
+        message += f"📍 *{city_names.upper()}*\n"
         
-        # Her şehrin bilgisini isminden emin olacak şekilde yaz
         for i in items:
             if i["temp"] is not None:
-                message += f"• {i['name']}: {i['desc']}, {i['temp']}°C\n"
+                message += f"   • {i['desc']} | *{i['temp']}°C*\n"
             else:
-                message += f"• {i['name']}: Veri alınamadı\n"
+                message += f"   • Veri alınamadı\n"
         
-        # Yorumu ekle
-        if comment:
-            message += f"💡 {comment}\n\n"
-        else:
-            message += "\n"
+        message += f"\n💡 *Tavsiye:* {comment}\n"
+        message += "━━━━━━━━━━━━━━━━━━━━━━\n"
 
     bot.send_message(TELEGRAM_GROUP_ID, message)
 
