@@ -46,8 +46,12 @@ def main():
     final_message = "\n".join(message_lines)
     
     try:
-        cl = Client()
-        cl.set_device({"app_version": "330.0.0.46.117", "android_version": 29, "android_release": "10"})
+        # main.py dosyanızdaki eski set_device satırını bununla değiştirin:
+        cl.set_device({
+            "app_version": "377.0.0.32.115",
+            "android_version": 30,
+            "android_release": "11"
+        })
         cl.login_by_sessionid(IG_SESSIONID)
         cl.direct_send(text=final_message, thread_ids=[int(INSTAGRAM_GROUP_ID)])
         print("Mesaj başarıyla gönderildi!")
